@@ -2,6 +2,7 @@ var playState = {
     
     preload: function() {  
         this.loadPlayerAssets();
+        this.loadElements();
     },
     
     create: function() {
@@ -12,6 +13,7 @@ var playState = {
         this.createStars('#444');
         this.createStars('#fff');
         this.createMountain();
+        this.createCargo();
     },
     
     update: function() {
@@ -107,6 +109,10 @@ var playState = {
                 }
             }
     },
+    // GAME ELEMENTS */
+    loadElements: function() {
+        game.load.image('cargo', 'assets/images/cargo.png');
+    },
     // GAME WORLD //
     setWorldBounds: function() {
         game.world.setBounds(0, 0, 800*6, 600);   
@@ -138,6 +144,17 @@ var playState = {
                 this.mountain.tilePosition.x += 4;
             if(this.player.direction === 1)
                 this.mountain.tilePosition.x -= 8;
+        }
+    },
+    // CARGO //
+    createCargo: function() {
+        cargoes = game.add.group();
+        cargoes.enableBody = true;
+        cargoes.physicsBodyType = Phaser.Physics.ARCADE;
+        
+        for(x=0; x<5; x++) {
+            var cargo = cargoes.create(Math.floor(Math.random() * (800*6)), Math.floor(Math.random() * (game.world.height - 32)), 'cargo');
+            //cargo.body.velocity.y = 50 + Math.random(50 + Math.random() * 200);
         }
     }
 };
