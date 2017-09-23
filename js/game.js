@@ -26,6 +26,8 @@ var playState = {
         this.player.direction = 1; //0=LEFT 1=RIGHT
         this.player.isMoving = false;
         this.player.anchor.setTo(0.5);
+        game.physics.enable(this.player, Phaser.Physics.ARCADE);
+        this.player.body.collideWorldBounds = true;     //prevent the player from leaving the game area
         this.createBullets();
     },
     loadPlayerAssets: function() {
