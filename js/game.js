@@ -16,6 +16,8 @@ var playState = {
         this.createCargo();
         this.createExplosion();
         this.createEnemies();
+        
+        this.setupTiming();
     },
     
     update: function() {
@@ -120,6 +122,9 @@ var playState = {
           cargo.kill();
         this.explode(player);
     },
+    setupTiming: function() {
+        game.time.events.loop(1000, this.updateEnemyDirection, this);
+    },
     
     // GAME ELEMENTS //
     loadElements: function() {
@@ -147,11 +152,6 @@ var playState = {
         this.explosions = game.add.group();
         this.explosions.createMultiple(30, 'explosion');
     },
-    setupCargo: function(cargo) {
-          //this.cargo.anchor.x = 0.5;
-        //this.cargo.anchor.y = 0.5;
-        //this.cargo.animations.add('explosions');
-    },
     explode: function(player) {
         var sprite = game.add.sprite(player.x, player.y, 'explosion');
         sprite.animations.add('explosion');
@@ -159,7 +159,7 @@ var playState = {
         this.flash();
     },
     flash: function() {
-                //flash screen
+        //flash screen
         game.camera.flash(0xfffff0, 250);
     },  
     
@@ -211,21 +211,59 @@ var playState = {
     },
     moveEnemies: function() {
         
-        //TODO: Set timer to change direction in X
-        this.enemies.forEach(function(enemy) {
-            if(Math.floor(Math.random() * 2) === 0)
-                enemy.x -= Math.floor(Math.random() * 8);
-            else
-                enemy.x += Math.floor(Math.random() * 8);
-        });
-        
-        //loop through each enemy setting random directions
-        this.enemies.forEach((enemy) => {
-            if(Math.floor(Math.random() * 2) === 0)
-                enemy.y += Math.floor(Math.random() * 10);
-            else
-                enemy.y -= Math.floor(Math.random() * 10);
-        });
+        switch(this.enemy_direction) {
+            case 0:
+                this.enemies.forEach((enemy) => {
+                    enemy.x++;
+                });
+                    break;
+            case 1:
+                this.enemies.forEach((enemy) => {
+                    enemy.x--;
+                });
+                    break;                    
+            case 2:
+                this.enemies.forEach((enemy) => {
+                    enemy.y++;
+                });
+                    break;
+            case 3:
+                this.enemies.forEach((enemy) => {
+                    enemy.y--;
+                });
+                break;
+            case 4:
+                this.enemies.forEach((enemy) => {
+                    enemy.x++;
+                    enemy.y--;
+                });
+                break;
+            case 5:
+                this.enemies.forEach((enemy) => {
+                    enemy.x--;
+                    enemy.y++;
+                });
+                    break;
+            case 6:
+                this.enemies.forEach((enemy) => {
+                    enemy.x--;
+                    enemy.y--;
+                });
+                    break;
+            case 7:
+                this.enemies.forEach((enemy) => {
+                    enemy.x++;
+                    enemy.y++;
+                });
+                    break;
+                default:
+                    this.enemies.forEach((enemy) => {
+                        enemy.x++;
+                    });
+        }
+    },
+    updateEnemyDirection: function() {   
+        this.enemy_direction = Math.floor(Math.random() * 8);
     }
 };
 
