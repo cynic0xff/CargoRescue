@@ -19,6 +19,9 @@ var playState = {
     update: function() {
         this.playerInput();
         this.updateMountain();
+        
+        //bullet hit cargo
+        game.physics.arcade.overlap(this.bullets, this.cargoes, this.collisionHandler, null, this);
     },
     
     // PLAYER //
@@ -40,14 +43,14 @@ var playState = {
     createBullets: function() {
         this.bulletTime = 0;
         this.bullet_speed = 550;
-        bullets = game.add.group();
-        bullets.enableBody = true;
-        bullets.physicsBodyType = Phaser.Physics.ARCADE;
-        bullets.createMultiple(50, 'bullet');
-        bullets.setAll('anchor.x', 0.5);
-        bullets.setAll('anchor.y', 0.5);
-        bullets.setAll('outOfBoundsKill', true);
-        bullets.setAll('checkWorldBounds', true);
+        this.bullets = game.add.group();
+        this.bullets.enableBody = true;
+        this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+        this.bullets.createMultiple(50, 'bullet');
+        this.bullets.setAll('anchor.x', 0.5);
+        this.bullets.setAll('anchor.y', 0.5);
+        this.bullets.setAll('outOfBoundsKill', true);
+        this.bullets.setAll('checkWorldBounds', true);
     },
     playerInput: function() {
       
@@ -77,7 +80,7 @@ var playState = {
     },
     fire: function() {
         
-            bullet = bullets.getFirstExists(false);
+            bullet = this.bullets.getFirstExists(false);
             
             if(bullet) {
                 
@@ -148,14 +151,17 @@ var playState = {
     },
     // CARGO //
     createCargo: function() {
-        cargoes = game.add.group();
-        cargoes.enableBody = true;
-        cargoes.physicsBodyType = Phaser.Physics.ARCADE;
+        this.cargoes = game.add.group();
+        this.cargoes.enableBody = true;
+        this.cargoes.physicsBodyType = Phaser.Physics.ARCADE;
         
         for(x=0; x<5; x++) {
-            var cargo = cargoes.create(Math.floor(Math.random() * (800*6)), Math.floor(Math.random() * (game.world.height - 32)), 'cargo');
-            //cargo.body.velocity.y = 50 + Math.random(50 + Math.random() * 200);
+            var cargo = this.cargoes.create(Math.floor(Math.random() * (800*6)), Math.floor(Math.random() * (game.world.height - 32)), 'cargo');
         }
+    },
+    collisionHandler: function(bullet, cargo) {
+        bullet.kill();
+        cargo.kill();
     }
 };
 
