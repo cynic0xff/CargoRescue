@@ -14,6 +14,7 @@ var playState = {
         this.createStars('#fff');
         this.createMountain();
         this.createCargo();
+        this.createExplosion();
     },
     
     update: function() {
@@ -22,6 +23,7 @@ var playState = {
         
         //bullet hit cargo
         game.physics.arcade.overlap(this.bullets, this.cargoes, this.collisionHandler, null, this);
+        game.physics.arcade.overlap(this.player, this.cargoes, this.playerCollideCargo, null, this);
     },
     
     // PLAYER //
@@ -38,7 +40,6 @@ var playState = {
     loadPlayerAssets: function() {
         game.load.image('player', 'assets/images/player.png');
         game.load.image('bullet', 'assets/images/bullet.png');
-        game.load.image('mountain', 'assets/images/mountain.png');
     },
     createBullets: function() {
         this.bulletTime = 0;
@@ -112,9 +113,44 @@ var playState = {
                 }
             }
     },
-    // GAME ELEMENTS */
+    playerCollideCargo: function(player, cargo) {
+          //TODO: display explosition
+          cargo.kill();
+        this.explode(player);
+    },
+    // GAME ELEMENTS //
     loadElements: function() {
         game.load.image('cargo', 'assets/images/cargo.png');
+        game.load.image('mountain', 'assets/images/mountain.png');
+        game.load.spritesheet('explosion', 'assets/images/explosion.png', 64, 64, 26);
+    },
+    // CARGO //
+    createCargo: function() {
+        this.cargoes = game.add.group();
+        this.cargoes.enableBody = true;
+        this.cargoes.physicsBodyType = Phaser.Physics.ARCADE;
+        
+        for(x=0; x<5; x++) {
+            var cargo = this.cargoes.create(Math.floor(Math.random() * (800*6)), Math.floor(Math.random() * (game.world.height - 32)), 'cargo');
+        }
+    },
+    collisionHandler: function(bullet, cargo) {
+        bullet.kill();
+        cargo.kill();
+    },
+    createExplosion: function() {
+        this.explosions = game.add.group();
+        this.explosions.createMultiple(30, 'explosion');
+    },
+    setupCargo: function(cargo) {
+          //this.cargo.anchor.x = 0.5;
+        //this.cargo.anchor.y = 0.5;
+        //this.cargo.animations.add('explosions');
+    },
+    explode: function(player) {
+        var sprite = game.add.sprite(player.x, player.y, 'explosion');
+        sprite.animations.add('explosion');
+        sprite.animations.play('explosion', 40, false);
     },
     // GAME WORLD //
     setWorldBounds: function() {
@@ -148,20 +184,6 @@ var playState = {
             if(this.player.direction === 1)
                 this.mountain.tilePosition.x -= 8;
         }
-    },
-    // CARGO //
-    createCargo: function() {
-        this.cargoes = game.add.group();
-        this.cargoes.enableBody = true;
-        this.cargoes.physicsBodyType = Phaser.Physics.ARCADE;
-        
-        for(x=0; x<5; x++) {
-            var cargo = this.cargoes.create(Math.floor(Math.random() * (800*6)), Math.floor(Math.random() * (game.world.height - 32)), 'cargo');
-        }
-    },
-    collisionHandler: function(bullet, cargo) {
-        bullet.kill();
-        cargo.kill();
     }
 };
 
