@@ -21,6 +21,7 @@ var playState = {
     update: function() {
         this.playerInput();
         this.updateMountain();
+        this.moveEnemies();
         
         //bullet hit cargo
         game.physics.arcade.overlap(this.bullets, this.cargoes, this.collisionHandler, null, this);
@@ -155,14 +156,19 @@ var playState = {
         var sprite = game.add.sprite(player.x, player.y, 'explosion');
         sprite.animations.add('explosion');
         sprite.animations.play('explosion', 40, false);
+        this.flash();
     },
+    flash: function() {
+                //flash screen
+        game.camera.flash(0xfffff0, 250);
+    },  
     
     // GAME WORLD //
     setWorldBounds: function() {
         game.world.setBounds(0, 0, 800*6, 600);   
     },
     setCamera: function() {
-        game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON, 0.1);
+        game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
     },
     setControls: function() {
         cursors = game.input.keyboard.createCursorKeys();
@@ -202,6 +208,24 @@ var playState = {
             enemy.anchor.setTo(0.5, 0.5);
             enemy.body.collideWorldBounds = true;
         }
+    },
+    moveEnemies: function() {
+        
+        //TODO: Set timer to change direction in X
+        this.enemies.forEach(function(enemy) {
+            if(Math.floor(Math.random() * 2) === 0)
+                enemy.x -= Math.floor(Math.random() * 8);
+            else
+                enemy.x += Math.floor(Math.random() * 8);
+        });
+        
+        //loop through each enemy setting random directions
+        this.enemies.forEach((enemy) => {
+            if(Math.floor(Math.random() * 2) === 0)
+                enemy.y += Math.floor(Math.random() * 10);
+            else
+                enemy.y -= Math.floor(Math.random() * 10);
+        });
     }
 };
 
